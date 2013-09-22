@@ -1,0 +1,93 @@
+Drop Table [Temporary].[dbo].[DUPImportTest];
+
+SET DATEFORMAT mdy
+CREATE TAble [Temporary].[dbo].[DUPImportTest]
+		(
+		LineCol INT
+		,carrierCol Char(200)   --
+		,AccountCol INT   --
+		,PATIENTCol Char(200)   --
+		--,DOBCol Date
+		,TicketCol Char(200)
+		--,PROVIDERCol Char(200)
+		,DOSCol Datetime   --
+      ,Location Char(200)   --
+		--,facilityCol Char(200)
+		--,guarantorCol Char(200)
+		--,idNumberCol Char(200)
+		--,guarantorDOECol Char(200)--Date
+		--,claimStatusCol Char(200)
+
+		--,agingCol INT
+		--,chargeCol Char(200)
+		--,insBalCol Char(200)
+		--,blank2Col Char(200)
+		--,blank3Col Char(200)
+		,statusCol Char(200)   --
+		,insStatCol Char(200)   --
+		,fistFiledCol Char(200)--Date   --
+		,lastFiledCol Char(200)--Date   --
+		
+		--,unknownCol Char(200)   --
+		,chargeCol Char(200)   --
+
+		,BalanceCol Char(200)    --
+
+		--,levelCol Char(200)
+		--,dltCol Date
+		--,notesCol Char(3000)
+	
+		)
+GO
+
+SET DATEFORMAT mdy
+--tab delimmeted
+Bulk insert [Temporary].[dbo].[DUPImportTest] FROM 'C:\Users\Administrator\Documents\FileImport\FileToImport.txt' WITH (FIELDTERMINATOR='\t',Maxerrors =10000, FIRSTROW = 2, ROWterminator='\n');
+--Select * FROM [dmwtool].[dbo].[DUPImportTest];
+
+--C:\Users\Administrator\Documents\FileImport\FileToImport.txt
+
+go
+
+
+
+Select COUNT(*),d.TicketCol From
+[Temporary].[dbo].[DupImportTest] d
+Group BY d.TicketCol
+Having COUNT(*)>1;
+
+
+
+DECLARE @tableA TABLE (dates date, PATIENT char(50), facility char(200), Counters Int)--, Highesteditdate datetime, ticketRand CHAR(40)
+INSERT INTO @tableA
+ SELECT CONVERT(date, DOSCol)
+		,PATIENTCol
+		,Location
+      ,COUNT(*)
+  FROM [Temporary].[dbo].[DUPImportTest]
+  GROUP BY CONVERT(date, DOSCol), PATIENTCol, Location
+  HAVING COUNT(*)>1;
+  
+  
+ -- SELECT * FROM @tableA;
+
+
+Select * From
+[Temporary].[dbo].[DupImportTest] d Join @tableA c ON c.dates = d.DOSCol AND (c.PATIENT) = d.PATIENTCol AND c.facility = d.Location;
+
+
+
+
+Select * From
+[Temporary].[dbo].[DupImportTest] d Join [DMWTOOL].[dbo].[Claims] c ON CONVERT(date, c.DateOfService) = d.DOSCol AND (c.PatientLast) = d.PATIENTCol AND c.Facility = d.Location
+Where c.ClientAccountId=23 AND c.TicketNumber != d.TicketCol;
+
+
+
+Select * From
+[Temporary].[dbo].[DupImportTest] d Join [DMWTOOL].[dbo].[Claims] c ON c.TicketNumber = d.TicketCol
+Where c.ClientAccountId=23;
+
+
+
+

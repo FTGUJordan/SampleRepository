@@ -1,6 +1,6 @@
 
 
-SET DATEFORMAT mdy
+
 CREATE TAble [Temporary].[dbo].[DUPImportTest]
 		(
 		LineCol INT

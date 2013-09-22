@@ -1,4 +1,4 @@
-Drop Table [Temporary].[dbo].[DUPImportTest];
+
 
 SET DATEFORMAT mdy
 CREATE TAble [Temporary].[dbo].[DUPImportTest]

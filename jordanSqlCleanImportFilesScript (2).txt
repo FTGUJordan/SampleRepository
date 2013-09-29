@@ -1,4 +1,4 @@
-
+Drop Table [Temporary].[dbo].[DUPImportTest];
 
 
 CREATE TAble [Temporary].[dbo].[DUPImportTest]
